@@ -26,7 +26,7 @@ type User {
 }
 type Book {
     bookId: ID,
-    authors: [string]
+    authors: [String]
     description: String
     title: String
     image: String
@@ -35,7 +35,7 @@ type Book {
 }
 type Auth {
     token: String
-    user: (user)
+    user: User
 
 }`;
 
