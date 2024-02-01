@@ -33,16 +33,22 @@ const SignupForm = () => {
       const { data } = await addUser({
         variables: { ...userFormData },
       });
-      Auth.login(data.addUser.token);
+      console.log('Mutation response data:', data);
+      if (data && data.addUser && data.addUser.token){
+        Auth.login(data.addUser.token);
+      } else {
+        console.error('missing token', data);
+        setShowAlert(true);
+      }
     } catch (err) {
       console.error(err);
       setShowAlert(true);
     }
 
     setUserFormData({
-      username: '',
-      email: '',
-      password: '',
+      username: ' ',
+      email: ' ',
+      password: ' ',
     });
   };
 

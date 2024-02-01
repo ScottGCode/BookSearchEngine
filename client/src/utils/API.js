@@ -1,57 +1,60 @@
-// route to get logged in user's info (needs the token)
+import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { GET_ME } from './queries';
+import { ADD_USER, LOGIN_USER, SAVE_BOOK, REMOVE_BOOK } from './mutations';
+
+const client = new ApolloClient({
+  uri: 'http://localhost:3001/graphql',
+  cache: new InMemoryCache(),
+});
+
 export const getMe = (token) => {
-  return fetch('/api/users/me', {
-    headers: {
-      'Content-Type': 'application/json',
-      authorization: `Bearer ${token}`,
+  return client.query({
+    query: GET_ME,
+    context: {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
     },
   });
 };
 
 export const createUser = (userData) => {
-  return fetch('/api/users', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(userData),
+  return client.mutate({
+    mutation: ADD_USER,
+    variables: { ...userData },
   });
 };
 
 export const loginUser = (userData) => {
-  return fetch('/api/users/login', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(userData),
+  return client.mutate({
+    mutation: LOGIN_USER,
+    variables: { ...userData },
   });
 };
 
-// save book data for a logged in user
 export const saveBook = (bookData, token) => {
-  return fetch('/api/users', {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(bookData),
+  return client.mutate({
+    mutation: SAVE_BOOK,
+    variables: { ...bookData },
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
   });
 };
 
-// remove saved book data for a logged in user
 export const deleteBook = (bookId, token) => {
-  return fetch(`/api/users/books/${bookId}`, {
-    method: 'DELETE',
-    headers: {
-      authorization: `Bearer ${token}`,
+  return client.mutate({
+    mutation: REMOVE_BOOK,
+    variables: { bookId },
+    context: {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
     },
   });
 };
 
-// make a search to google books api
-// https://www.googleapis.com/books/v1/volumes?q=harry+potter
 export const searchGoogleBooks = (query) => {
   return fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}`);
 };
+

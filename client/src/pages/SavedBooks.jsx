@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Container,
   Card,
@@ -16,7 +16,11 @@ const SavedBooks = () => {
   const [userData, setUserData] = useState({});
   // execute GET_ME query on page load
   const { loading, data } = useQuery(GET_ME);
-  setUserData(data?.me || {});
+
+  useEffect(() => {
+    setUserData(data?.me || {});
+  }, [data]);
+
   // execute REMOVE_BOOK mutation
   const [removeBook] = useMutation(REMOVE_BOOK);
   // create function that accepts the _id value as params and deletes the book
@@ -51,12 +55,12 @@ const SavedBooks = () => {
       </div>
       <Container>
         <h2 className='pt-5'>
-          {userData.savedBooks.length
+          {userData.savedBooks && userData.savedBooks.length
             ? `Viewing ${userData.savedBooks.length} saved ${userData.savedBooks.length === 1 ? 'book' : 'books'}:`
             : 'You have no saved books!'}
         </h2>
         <Row>
-          {userData.savedBooks.map((book) => {
+          {userData.savedBooks && userData.savedBooks.map((book) => {
             return (
               <Col md="4" key={book.bookId}>
                 <Card border='dark'>
